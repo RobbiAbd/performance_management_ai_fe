@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "useDefineForClassFields": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
