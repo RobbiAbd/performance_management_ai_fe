@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import About from './pages/About'
 import Analytics from './pages/Analytics'
+import DataSembako from './pages/DataSembako'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/data-sembako" element={<DataSembako />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

@@ -17,11 +17,11 @@
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
   --grid-color: oklch(0% 0 0 / 0.03);
-  --chart-1: #FACC00;
-  --chart-2: #7A83FF;
-  --chart-3: #FF4D50;
-  --chart-4: #00D696;
-  --chart-5: #0099FF;
+  --chart-1: #3B82F6;
+  --chart-2: #10B981;
+  --chart-3: #F59E0B;
+  --chart-4: #EF4444;
+  --chart-5: #8B5CF6;
   --chart-active-dot: #000;
 }
 
@@ -35,11 +35,11 @@
   --ring: oklch(100% 0 0);
   --shadow: 4px 4px 0px 0px var(--border);
   --grid-color: oklch(100% 0 0 / 0.05);
-  --chart-1: #E0B700;
-  --chart-2: #7A83FF;
-  --chart-3: #FF6669;
-  --chart-4: #00BD84;
-  --chart-5: #008AE5;
+  --chart-1: #60A5FA;
+  --chart-2: #34D399;
+  --chart-3: #FBBF24;
+  --chart-4: #F87171;
+  --chart-5: #A78BFA;
   --chart-active-dot: #fff;
 }
 

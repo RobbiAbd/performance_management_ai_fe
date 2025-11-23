@@ -1,7 +1,13 @@
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { appConfig } from '@/lib/config'
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { appConfig } from "@/lib/config";
 
 function Home() {
   return (
@@ -26,9 +32,11 @@ function Home() {
                 Pelajari Lebih Lanjut
               </Button>
             </Link>
-            <Button size="lg" variant="neutral">
-              Mulai
-            </Button>
+            <Link to="/analytics">
+              <Button size="lg" variant="neutral">
+                Mulai
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -45,7 +53,8 @@ function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm font-base">
-                Analisis pola dan tren dalam data ketahanan pangan menggunakan machine learning.
+                Analisis pola dan tren dalam data ketahanan pangan menggunakan
+                machine learning.
               </p>
             </CardContent>
           </Card>
@@ -59,7 +68,8 @@ function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm font-base">
-                Visualisasikan data Anda dengan grafik dan chart yang indah dan interaktif.
+                Visualisasikan data Anda dengan grafik dan chart yang indah dan
+                interaktif.
               </p>
             </CardContent>
           </Card>
@@ -73,7 +83,8 @@ function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm font-base">
-                Temukan pola tersembunyi dan dapatkan wawasan untuk meningkatkan ketahanan pangan.
+                Temukan pola tersembunyi dan dapatkan wawasan untuk meningkatkan
+                ketahanan pangan.
               </p>
             </CardContent>
           </Card>
@@ -102,7 +113,7 @@ function Home() {
         </Card>
       </section>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

@@ -55,6 +55,17 @@ function Navbar() {
               </Button>
             </Link>
 
+            <Link to="/data-sembako">
+              <Button
+                variant={isActive('/data-sembako') ? 'default' : 'neutral'}
+                className={cn(
+                  isActive('/data-sembako') && 'border-2 border-border shadow-shadow'
+                )}
+              >
+                Data Sembako
+              </Button>
+            </Link>
+
             <Link to="/about">
               <Button
                 variant={isActive('/about') ? 'default' : 'neutral'}
