@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -13,6 +16,7 @@
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
+  --grid-color: oklch(0% 0 0 / 0.03);
   --chart-1: #FACC00;
   --chart-2: #7A83FF;
   --chart-3: #FF4D50;
@@ -30,6 +34,7 @@
   --border: oklch(0% 0 0);
   --ring: oklch(100% 0 0);
   --shadow: 4px 4px 0px 0px var(--border);
+  --grid-color: oklch(100% 0 0 / 0.05);
   --chart-1: #E0B700;
   --chart-2: #7A83FF;
   --chart-3: #FF6669;
@@ -61,14 +66,25 @@
   --shadow-shadow: var(--shadow);
   --font-weight-base: 500;
   --font-weight-heading: 700;
+  --font-family-base: 'Public Sans', sans-serif;
+  --font-family-heading: 'Montserrat', sans-serif;
 }
   
 @layer base {
+  * {
+    font-family: var(--font-family-base);
+  }
+
   body {
     @apply text-foreground font-base bg-background;
+    background-image: 
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   h1, h2, h3, h4, h5, h6{
     @apply font-heading;
+    font-family: var(--font-family-heading);
   }
 }
