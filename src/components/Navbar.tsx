@@ -43,6 +43,18 @@ function Navbar() {
                 Home
               </Button>
             </Link>
+            
+            <Link to="/analytics">
+              <Button
+                variant={isActive('/analytics') ? 'default' : 'neutral'}
+                className={cn(
+                  isActive('/analytics') && 'border-2 border-border shadow-shadow'
+                )}
+              >
+                Analytics
+              </Button>
+            </Link>
+
             <Link to="/about">
               <Button
                 variant={isActive('/about') ? 'default' : 'neutral'}
@@ -53,6 +65,7 @@ function Navbar() {
                 About
               </Button>
             </Link>
+            
             
             {/* Dark Mode Toggle */}
             <div className="flex items-center gap-2">

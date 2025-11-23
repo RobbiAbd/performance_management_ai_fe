@@ -316,6 +316,89 @@ Halaman tentang SIPALING dengan informasi lengkap.
 
 **Components Used:**
 - Card (semua sub-components)
+- appConfig dari `@/lib/config`
+
+---
+
+### 22. Analytics Page
+**File:** `src/pages/Analytics.tsx`
+
+**Deskripsi:**
+Halaman analytics dengan visualisasi data ketahanan pangan menggunakan chart.
+
+**Charts:**
+1. **Bar Chart** - Produksi Pangan per Provinsi
+   - Data: 6 provinsi utama
+   - Metrics: Beras, Jagung, Kedelai, Gula
+   - Library: Recharts BarChart
+
+2. **Line Chart** - Tren Skor Ketahanan Pangan
+   - Data: 12 bulan
+   - Metrics: Skor aktual vs Target
+   - Library: Recharts LineChart
+
+3. **Pie Chart** - Distribusi Jenis Pangan
+   - Data: 5 kategori pangan
+   - Persentase distribusi
+   - Library: Recharts PieChart
+
+4. **Area Chart** - Stok vs Kebutuhan Pangan
+   - Data: 6 bulan
+   - Metrics: Stok dan Kebutuhan
+   - Library: Recharts AreaChart
+
+**Summary Cards:**
+- Total Produksi
+- Skor Ketahanan
+- Stok Tersedia
+- Provinsi Terdata
+
+**Components Used:**
+- Card (semua sub-components)
+- ChartContainer, ChartTooltip, ChartLegend dari `@/components/ui/chart`
+- Recharts components (BarChart, LineChart, PieChart, AreaChart)
+
+**Data:**
+- Data dummy untuk demonstrasi
+- Relevan dengan konteks ketahanan pangan
+- Siap untuk integrasi dengan API
+
+---
+
+### 23. Navbar Component (Updated)
+**File:** `src/components/Navbar.tsx`
+
+**Fitur Tambahan:**
+- Dark mode toggle dengan Switch component
+- Icon Sun dan Moon dari lucide-react
+- Theme management dengan next-themes
+- Hydration mismatch prevention
+
+**Dependencies Tambahan:**
+- `next-themes` (useTheme hook)
+- `lucide-react` (Sun, Moon icons)
+- `@/components/ui/switch`
+
+---
+
+## 🎨 Design Features
+
+### Typography
+- **Base Font:** Public Sans (Google Fonts)
+- **Heading Font:** Montserrat (Google Fonts)
+- **Implementation:** CSS variables dan global styles
+
+### Dark Mode
+- **Library:** next-themes
+- **Toggle:** Switch component di Navbar
+- **Persistence:** localStorage
+- **System Preference:** Supported
+
+### Background Pattern
+- **Type:** Grid pattern
+- **Size:** 40px × 40px
+- **Color:** Subtle dengan opacity
+- **Implementation:** CSS linear-gradient
 
 ---
 

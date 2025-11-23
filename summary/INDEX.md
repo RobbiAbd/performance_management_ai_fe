@@ -2,6 +2,15 @@
 
 ## 📖 Dokumentasi Tersedia
 
+### 0. [SUMMARY.md](./SUMMARY.md) ⭐ **START HERE**
+**Quick Summary Lengkap**
+
+Ringkasan singkat semua yang sudah dikerjakan, statistics, dan quick start.
+
+**Baca ini jika:** Ingin overview cepat dalam 1 halaman
+
+---
+
 ### 1. [README.md](./README.md)
 **Overview Project**
 - Deskripsi singkat SIPALING
@@ -55,7 +64,7 @@
 **Summary Lengkap Development**
 
 **Isi:**
-- Timeline development (3 sessions)
+- Timeline development (5 sessions)
 - Fitur yang telah diimplementasikan
 - Design system details
 - Dependencies list
@@ -66,6 +75,19 @@
 - How to run
 
 **Baca ini jika:** Ingin memahami keseluruhan development process dan planning
+
+---
+
+### 4. [CHANGELOG.md](./CHANGELOG.md)
+**Changelog Development**
+
+**Isi:**
+- Perubahan terbaru
+- Fitur yang ditambahkan
+- Update dan perubahan
+- Version history
+
+**Baca ini jika:** Ingin melihat history perubahan dan fitur baru
 
 ---
 
@@ -85,21 +107,30 @@
 
 ## 📊 Statistics
 
-- **Total Components:** 21
+- **Total Components:** 23
   - Custom Components: 1 (Navbar)
   - UI Components: 17
-  - Page Components: 2
-  - Utility: 1
+  - Page Components: 3
+  - Utility: 2 (utils, config)
 
-- **Total Pages:** 2
+- **Total Pages:** 3
   - Home (Landing Page)
   - About
+  - Analytics (Chart Page)
 
-- **Routes:** 2
+- **Routes:** 3
   - `/` → Home
   - `/about` → About
+  - `/analytics` → Analytics
 
-- **Development Sessions:** 3
+- **Development Sessions:** 5
+
+- **Features:**
+  - ✅ Dark Mode
+  - ✅ Custom Fonts
+  - ✅ Background Grid Pattern
+  - ✅ Environment Configuration
+  - ✅ Chart Visualizations
 
 ---
 

@@ -63,6 +63,66 @@
 
 ---
 
+### Session 4: Font, Dark Mode & Environment Configuration
+**Tanggal:** Development Session
+
+**Yang Dikerjakan:**
+1. ✅ Menambahkan Google Fonts:
+   - Public Sans untuk body text
+   - Montserrat untuk headings
+   - Font diterapkan secara global
+
+2. ✅ Implementasi Dark Mode:
+   - Install dan setup `next-themes`
+   - Dark mode toggle di Navbar dengan Switch component
+   - ThemeProvider di App.jsx
+   - Script untuk prevent flash saat load
+
+3. ✅ Background Grid Pattern:
+   - Grid pattern dengan garis tipis dan subtle
+   - Ukuran grid: 40px × 40px
+   - Support light dan dark mode
+   - Warna grid menyesuaikan tema
+
+4. ✅ Update Nama Aplikasi:
+   - Nama baru: "SIPALING — Sistem Pemetaan Ketahanan Pangan Nasional"
+   - File `.env` untuk environment variables
+   - File `src/lib/config.ts` untuk config management
+   - Update semua halaman menggunakan config dari env
+
+**Hasil:**
+- Typography yang lebih baik dengan custom fonts
+- Dark mode fully functional
+- Background pattern yang menarik
+- Configuration management yang terstruktur
+
+---
+
+### Session 5: Analytics Page dengan Chart
+**Tanggal:** Development Session
+
+**Yang Dikerjakan:**
+1. ✅ Membuat halaman Analytics (`src/pages/Analytics.tsx`):
+   - 4 jenis chart dengan data dummy:
+     - Bar Chart: Produksi Pangan per Provinsi
+     - Line Chart: Tren Skor Ketahanan Pangan
+     - Pie Chart: Distribusi Jenis Pangan
+     - Area Chart: Stok vs Kebutuhan Pangan
+   - 4 Summary Cards dengan statistik
+   - Data dummy relevan untuk ketahanan pangan
+
+2. ✅ Update Navigation:
+   - Route baru: `/analytics`
+   - Link "Analytics" di Navbar
+   - Active state highlighting
+
+**Hasil:**
+- Halaman analytics dengan visualisasi data lengkap
+- Chart interaktif dengan tooltip dan legend
+- Data dummy yang relevan untuk demonstrasi
+
+---
+
 ## 🎯 Fitur yang Telah Diimplementasikan
 
 ### ✅ Routing System
@@ -70,6 +130,7 @@
 - **Routes:**
   - `/` - Home/Landing page
   - `/about` - About page
+  - `/analytics` - Analytics/Chart page
 - **Features:**
   - BrowserRouter untuk client-side routing
   - Route configuration di App.jsx
@@ -80,7 +141,8 @@
 - **Features:**
   - Sticky positioning (stays at top)
   - Logo SIPALING
-  - Navigation links (Home, About)
+  - Navigation links (Home, About, Analytics)
+  - Dark mode toggle dengan Switch component
   - Active route highlighting
   - Neobrutalism styling
   - Responsive design
@@ -113,6 +175,58 @@
   - Teknologi
 - **Design:** Neobrutalism dengan Card components
 
+### ✅ Analytics Page
+- **Location:** `src/pages/Analytics.tsx`
+- **Charts:**
+  1. **Bar Chart** - Produksi Pangan per Provinsi (Beras, Jagung, Kedelai, Gula)
+  2. **Line Chart** - Tren Skor Ketahanan Pangan (12 bulan)
+  3. **Pie Chart** - Distribusi Jenis Pangan Nasional
+  4. **Area Chart** - Stok vs Kebutuhan Pangan
+- **Summary Cards:**
+  - Total Produksi: 38,450 ribu ton
+  - Skor Ketahanan: 84
+  - Stok Tersedia: 1,480 ribu ton
+  - Provinsi Terdata: 34
+- **Features:**
+  - Interactive tooltips
+  - Chart legends
+  - Responsive design
+  - Data dummy untuk demonstrasi
+
+### ✅ Dark Mode
+- **Library:** next-themes
+- **Features:**
+  - Toggle switch di Navbar
+  - Theme persistence (localStorage)
+  - Prevent flash on load
+  - Support system preference
+  - Smooth transitions
+
+### ✅ Typography
+- **Fonts:**
+  - Public Sans (body text) - Google Fonts
+  - Montserrat (headings) - Google Fonts
+- **Implementation:**
+  - Global font application
+  - CSS variables untuk font families
+  - Responsive font sizing
+
+### ✅ Background Pattern
+- **Grid Pattern:**
+  - Ukuran: 40px × 40px
+  - Subtle lines dengan opacity
+  - Support light dan dark mode
+  - CSS linear-gradient implementation
+
+### ✅ Environment Configuration
+- **Files:**
+  - `.env` - Environment variables
+  - `src/lib/config.ts` - Config management
+- **Variables:**
+  - `VITE_APP_NAME` - Nama aplikasi
+  - `VITE_APP_FULL_NAME` - Nama lengkap
+  - `VITE_APP_DESCRIPTION` - Deskripsi aplikasi
+
 ---
 
 ## 🎨 Design System
@@ -137,13 +251,24 @@
    - `text-foreground` - Default text color
 
 5. **Typography**
-   - `font-heading` - Bold headings (700)
-   - `font-base` - Base text (500)
+   - `font-heading` - Bold headings (700) - Montserrat
+   - `font-base` - Base text (500) - Public Sans
+   - Custom font families via CSS variables
 
 6. **Interactive Effects**
    - Hover translate effects
    - Shadow removal on hover
    - Active state highlighting
+
+7. **Background Pattern**
+   - Grid pattern dengan linear-gradient
+   - Subtle lines (opacity 3-5%)
+   - Responsive grid size (40px)
+
+8. **Dark Mode**
+   - Theme switching dengan next-themes
+   - Color variables untuk light/dark
+   - Smooth transitions
 
 ---
 
@@ -214,15 +339,18 @@ sipaling-fe/
 │   │   └── Navbar.tsx            # Custom Navbar Component
 │   ├── pages/
 │   │   ├── Home.tsx              # Landing Page
-│   │   └── About.tsx             # About Page
+│   │   ├── About.tsx             # About Page
+│   │   └── Analytics.tsx        # Analytics/Chart Page
 │   ├── lib/
-│   │   └── utils.ts              # Utility functions
+│   │   ├── utils.ts             # Utility functions
+│   │   └── config.ts            # App configuration
 │   ├── App.jsx                   # Main App with Router
 │   ├── main.jsx                  # Entry Point
 │   ├── App.css
 │   └── index.css                 # Global Styles & Theme
 ├── public/
 │   └── vite.svg
+├── .env                           # Environment variables
 ├── package.json
 ├── vite.config.js
 ├── tsconfig.json
@@ -255,16 +383,29 @@ sipaling-fe/
 - Custom theme variables
 - Neobrutalism design tokens
 - Dark mode support
+- Google Fonts imports
+- Background grid pattern
+- Font family variables
+
+### 5. `.env`
+- Environment variables untuk aplikasi
+- VITE_ prefix untuk client-side access
+- App name, full name, description
+
+### 6. `src/lib/config.ts`
+- Configuration management
+- Read dari environment variables
+- Fallback values
 
 ---
 
 ## 🎯 Next Steps / Future Development
 
 ### Potential Features:
-1. **Data Visualization Page**
+1. ✅ **Data Visualization Page** - DONE
    - Charts untuk data ketahanan pangan
    - Interactive dashboards
-   - Filter dan search functionality
+   - Filter dan search functionality (future)
 
 2. **Clustering Analysis Page**
    - Input form untuk data
