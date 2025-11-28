@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getTSembakoList, TSembako, TSembakoListParams } from '@/lib/api'
+import { getTSembakoList, TSembako, TSembakoListParams, getProvinsiList, getKabupatenKotaList, getSembakoSimpleList, Provinsi, KabupatenKota, Sembako } from '@/lib/api'
 import { RefreshCw, MapPin, Calendar, Database, FileSpreadsheet, BarChart3, Image as ImageIcon, Store } from 'lucide-react'
 
 // Component for small image in header
@@ -46,6 +46,15 @@ function DataSembako() {
   const [locationType, setLocationType] = useState<'provinsi' | 'kabupaten' | ''>('')
   const [locationId, setLocationId] = useState<string>('')
 
+  // Location data
+  const [provinsiList, setProvinsiList] = useState<Provinsi[]>([])
+  const [kabupatenKotaList, setKabupatenKotaList] = useState<KabupatenKota[]>([])
+  const [loadingLocations, setLoadingLocations] = useState(false)
+
+  // Sembako data
+  const [sembakoList, setSembakoList] = useState<Sembako[]>([])
+  const [loadingSembako, setLoadingSembako] = useState(false)
+
   const fetchData = async () => {
     setLoading(true)
     setError(null)
@@ -65,9 +74,58 @@ function DataSembako() {
     }
   }
 
+  const fetchProvinsiList = async () => {
+    setLoadingLocations(true)
+    try {
+      const response = await getProvinsiList()
+      if (response.success) {
+        setProvinsiList(response.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch provinsi list:', err)
+    } finally {
+      setLoadingLocations(false)
+    }
+  }
+
+  const fetchKabupatenKotaList = async () => {
+    setLoadingLocations(true)
+    try {
+      const response = await getKabupatenKotaList()
+      if (response.success) {
+        setKabupatenKotaList(response.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch kabupaten/kota list:', err)
+    } finally {
+      setLoadingLocations(false)
+    }
+  }
+
+  const fetchSembakoList = async () => {
+    setLoadingSembako(true)
+    try {
+      const response = await getSembakoSimpleList()
+      if (response.success) {
+        setSembakoList(response.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch sembako list:', err)
+    } finally {
+      setLoadingSembako(false)
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [filters])
+
+  useEffect(() => {
+    // Fetch location and sembako lists on mount
+    fetchProvinsiList()
+    fetchKabupatenKotaList()
+    fetchSembakoList()
+  }, [])
 
   const handlePageChange = (newPage: number) => {
     setFilters((prev) => ({ ...prev, page: newPage }))
@@ -207,14 +265,23 @@ function DataSembako() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sembako</label>
-                <Input
-                  type="number"
-                  placeholder="Masukkan Nama Sembako"
-                  value={filters.sembako_id || ''}
-                  onChange={(e) =>
-                    handleFilterChange('sembako_id', e.target.value ? parseInt(e.target.value) : undefined)
-                  }
-                />
+                <Select
+                  value={filters.sembako_id ? String(filters.sembako_id) : undefined}
+                  onValueChange={(value) => handleFilterChange('sembako_id', value === 'all' ? undefined : parseInt(value))}
+                  disabled={loadingSembako}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={loadingSembako ? 'Memuat...' : 'Pilih Sembako'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua</SelectItem>
+                    {sembakoList.map((sembako) => (
+                      <SelectItem key={sembako.id} value={String(sembako.id)}>
+                        {sembako.nama}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Lokasi</label>
@@ -232,13 +299,38 @@ function DataSembako() {
                       <SelectItem value="kabupaten">Kabupaten/Kota</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input
-                    placeholder={locationType === 'provinsi' ? 'ID Provinsi' : locationType === 'kabupaten' ? 'ID Kab/Kota' : 'Pilih tipe dulu'}
-                    value={locationId}
-                    onChange={(e) => handleLocationIdChange(e.target.value)}
-                    disabled={!locationType}
-                    className="flex-1"
-                  />
+                  <Select
+                    value={locationId || undefined}
+                    onValueChange={(value) => handleLocationIdChange(value === 'all' ? '' : value)}
+                    disabled={!locationType || loadingLocations}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue
+                        placeholder={
+                          loadingLocations
+                            ? 'Memuat...'
+                            : locationType === 'provinsi'
+                              ? 'Pilih Provinsi'
+                              : locationType === 'kabupaten'
+                                ? 'Pilih Kabupaten/Kota'
+                                : 'Pilih tipe dulu'
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua</SelectItem>
+                      {locationType === 'provinsi' && provinsiList.map((prov) => (
+                        <SelectItem key={prov.id} value={prov.id}>
+                          {prov.nama}
+                        </SelectItem>
+                      ))}
+                      {locationType === 'kabupaten' && kabupatenKotaList.map((kab) => (
+                        <SelectItem key={kab.id} value={kab.id}>
+                          {kab.nama}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="space-y-2">

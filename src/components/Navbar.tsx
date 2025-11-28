@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
+import { appConfig } from '@/lib/config'
 
 function Navbar() {
   const location = useLocation()
@@ -28,7 +29,7 @@ function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="font-heading text-2xl font-bold">
-            SIPALING
+            {appConfig.name}
           </Link>
 
           {/* Navigation Links & Dark Mode Toggle */}
@@ -51,7 +52,7 @@ function Navbar() {
                   isActive('/analytics') && 'border-2 border-border shadow-shadow'
                 )}
               >
-                Analytics
+                Chart
               </Button>
             </Link>
 

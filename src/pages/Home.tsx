@@ -18,7 +18,7 @@ function Home() {
           <h1 className="text-6xl md:text-7xl font-heading leading-tight">
             WELCOME TO
             <br />
-            <span className="text-main">SIPALING</span>
+            <span className="text-main">{appConfig.name}</span>
           </h1>
           <p className="text-lg md:text-xl font-base max-w-2xl mx-auto text-foreground/80">
             {appConfig.fullName}

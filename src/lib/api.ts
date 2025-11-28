@@ -67,6 +67,41 @@ export interface ApiErrorResponse {
   errors: Record<string, string> | null
 }
 
+export interface Provinsi {
+  id: string
+  nama: string
+}
+
+export interface ProvinsiListResponse {
+  success: boolean
+  message: string
+  data: Provinsi[]
+}
+
+export interface KabupatenKota {
+  id: string
+  nama: string
+}
+
+export interface KabupatenKotaListResponse {
+  success: boolean
+  message: string
+  data: KabupatenKota[]
+}
+
+export interface Sembako {
+  id: number
+  nama: string
+  satuan: string
+  image?: string | null
+}
+
+export interface SembakoSimpleListResponse {
+  success: boolean
+  message: string
+  data: Sembako[]
+}
+
 /**
  * Normalize base URL by ensuring it ends with exactly one trailing slash
  */
@@ -125,14 +160,14 @@ export async function getTSembakoList(
 export async function getTSembakoById(id: number): Promise<TSembakoSingleResponse> {
   const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
   const url = `${baseUrl}tsembako/${id}/`
-  
+
   const response = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   })
-  
+
   if (!response.ok) {
     const errorData: ApiErrorResponse = await response.json().catch(() => ({
       success: false,
@@ -141,7 +176,139 @@ export async function getTSembakoById(id: number): Promise<TSembakoSingleRespons
     }))
     throw new Error(errorData.message || 'Failed to fetch data')
   }
-  
+
   return response.json()
 }
+
+/**
+ * Fetch list of Provinsi
+ */
+export async function getProvinsiList(): Promise<ProvinsiListResponse> {
+  const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+  const url = `${baseUrl}provinsi/`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const errorData: ApiErrorResponse = await response.json().catch(() => ({
+      success: false,
+      message: `HTTP error! status: ${response.status}`,
+      errors: null,
+    }))
+    throw new Error(errorData.message || 'Failed to fetch provinsi data')
+  }
+
+  return response.json()
+}
+
+/**
+ * Fetch list of Kabupaten/Kota
+ */
+export async function getKabupatenKotaList(): Promise<KabupatenKotaListResponse> {
+  const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+  const url = `${baseUrl}kabupaten-kota/`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const errorData: ApiErrorResponse = await response.json().catch(() => ({
+      success: false,
+      message: `HTTP error! status: ${response.status}`,
+      errors: null,
+    }))
+    throw new Error(errorData.message || 'Failed to fetch kabupaten/kota data')
+  }
+
+  return response.json()
+}
+
+/**
+ * Fetch simple list of Sembako (for dropdown/select)
+ */
+export async function getSembakoSimpleList(): Promise<SembakoSimpleListResponse> {
+  const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+  const url = `${baseUrl}sembako/simple/`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const errorData: ApiErrorResponse = await response.json().catch(() => ({
+      success: false,
+      message: `HTTP error! status: ${response.status}`,
+      errors: null,
+    }))
+    throw new Error(errorData.message || 'Failed to fetch sembako data')
+  }
+
+  return response.json()
+}
+
+/**
+ * Generic API client for making HTTP requests
+ */
+const api = {
+  get: async (endpoint: string) => {
+    const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+    const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const errorData: ApiErrorResponse = await response.json().catch(() => ({
+        success: false,
+        message: `HTTP error! status: ${response.status}`,
+        errors: null,
+      }))
+      throw new Error(errorData.message || 'Failed to fetch data')
+    }
+
+    return response.json()
+  },
+
+  post: async (endpoint: string, data?: any) => {
+    const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+    const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    })
+
+    if (!response.ok) {
+      const errorData: ApiErrorResponse = await response.json().catch(() => ({
+        success: false,
+        message: `HTTP error! status: ${response.status}`,
+        errors: null,
+      }))
+      throw new Error(errorData.message || 'Failed to post data')
+    }
+
+    return response.json()
+  },
+}
+
+export default api
 
