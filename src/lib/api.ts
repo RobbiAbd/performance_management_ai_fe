@@ -1,4 +1,5 @@
 import { appConfig } from './config'
+import { getToken } from './auth'
 
 // Types based on API specification
 export interface TSembako {
@@ -261,6 +262,13 @@ export async function getSembakoSimpleList(): Promise<SembakoSimpleListResponse>
 /**
  * Generic API client for making HTTP requests
  */
+function authHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const token = getToken()
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  return headers
+}
+
 const api = {
   get: async (endpoint: string) => {
     const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
@@ -268,9 +276,7 @@ const api = {
 
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
     })
 
     if (!response.ok) {
@@ -291,9 +297,7 @@ const api = {
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: data ? JSON.stringify(data) : undefined,
     })
 
@@ -308,6 +312,101 @@ const api = {
 
     return response.json()
   },
+}
+
+// --- Auth API ---
+
+export interface LoginResponse {
+  message: string
+  status: string
+  code: number
+  data: {
+    access_token: string
+    token_type: string
+    user: {
+      id: number
+      username: string
+      full_name: string
+      email: string
+      role_id: number
+      employee_id: number
+    }
+  }
+}
+
+export async function login(username: string, password: string): Promise<LoginResponse> {
+  return api.post('auth/login/json', { username, password }) as Promise<LoginResponse>
+}
+
+// --- Motivation API ---
+
+export interface MotivationGenerateResponse {
+  message: string
+  status: string
+  code: number
+  data: {
+    id: number
+    motivation: string
+    created_at: string
+  }
+}
+
+export async function generateMotivation(): Promise<MotivationGenerateResponse> {
+  return api.post('motivation/generate') as Promise<MotivationGenerateResponse>
+}
+
+// --- Performance Management API ---
+
+export interface PerformanceSummaryAiSummary {
+  summary: string
+  achieved_kpi: string[]
+  not_achieved_kpi: string[]
+  recommendations: string[]
+  motivation: string
+}
+
+export interface PerformanceSummaryResponse {
+  message: string
+  status: string
+  code: number
+  data: {
+    employee_id: number
+    period: string
+    ai_summary: PerformanceSummaryAiSummary
+    generated_at: string
+  }
+}
+
+export interface PerformanceAnalyticsResponse {
+  message: string
+  status: string
+  code: number
+  data: {
+    period: string
+    avg_score_per_department: { department: string; avg_score: number; employee_count: number }[]
+    top_performers: { employee_id: number; full_name: string; total_score: number; performance_category: string }[]
+    underperformers: { employee_id: number; full_name: string; total_score: number; performance_category: string }[]
+    category_distribution: { category: string; count: number }[]
+  }
+}
+
+export async function getPerformanceSummary(
+  employeeCode: string,
+  period: string
+): Promise<PerformanceSummaryResponse> {
+  return api.get(`performance/summary/${encodeURIComponent(employeeCode)}/${period}`) as Promise<PerformanceSummaryResponse>
+}
+
+/** POST: generate/regenerate AI summary untuk karyawan & periode */
+export async function generatePerformanceSummary(
+  employeeCode: string,
+  period: string
+): Promise<unknown> {
+  return api.post(`performance/generate/${encodeURIComponent(employeeCode)}/${period}`)
+}
+
+export async function getPerformanceAnalytics(period: string): Promise<PerformanceAnalyticsResponse> {
+  return api.get(`performance/analytics/${period}`) as Promise<PerformanceAnalyticsResponse>
 }
 
 export default api
