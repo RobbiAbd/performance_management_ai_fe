@@ -18,16 +18,6 @@ import {
 import { getPerformanceSummary, generatePerformanceSummary } from "@/lib/api";
 import type { PerformanceSummaryResponse } from "@/lib/api";
 
-function isGeneratedToday(generatedAt: string): boolean {
-  const generated = new Date(generatedAt);
-  const today = new Date();
-  return (
-    generated.getFullYear() === today.getFullYear() &&
-    generated.getMonth() === today.getMonth() &&
-    generated.getDate() === today.getDate()
-  );
-}
-
 const PERIODS = ["Q1-2026", "Q2-2026", "Q3-2026", "Q4-2026"];
 
 const ME = "me";
@@ -45,16 +35,16 @@ function Summary() {
     setLoading(true);
     try {
       let res = await getPerformanceSummary(ME, period);
-      if (res.status !== "success" || !res.data) {
-        setError(res.message || "Gagal mengambil data.");
-        return;
-      }
-      if (!isGeneratedToday(res.data.generated_at)) {
-        await generatePerformanceSummary(ME, period);
+      // Hanya hit POST generate jika summary not found (404)
+      if (res.code === 404 || (res.status === "error" && !res.data)) {
+        await generatePerformanceSummary(period);
         res = await getPerformanceSummary(ME, period);
       }
-      if (res.status === "success" && res.data) setData(res.data);
-      else setError(res.message || "Gagal mengambil data.");
+      if (res.status === "success" && res.data) {
+        setData(res.data);
+      } else {
+        setError(res.message || "Gagal mengambil data.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal mengambil summary.");
     } finally {
@@ -108,25 +98,25 @@ function Summary() {
 
         {/* Kanan: Konten */}
         <div className="min-h-[200px]">
-          {data ? (
+          {data?.ai_summary ? (
             <Card className="bg-main text-main-foreground">
               <CardHeader>
                 <CardTitle>Ringkasan</CardTitle>
                 <CardDescription className="text-main-foreground/80">
-                  Periode {data.period} · Dihasilkan: {new Date(data.generated_at).toLocaleString("id-ID")}
+                  Periode {data.period} · Dihasilkan: {data.generated_at ? new Date(data.generated_at).toLocaleString("id-ID") : "-"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-main-foreground">{data.ai_summary.summary}</p>
+                <p className="text-main-foreground">{data.ai_summary.summary ?? ""}</p>
                 <div>
                   <h3 className="font-heading text-main-foreground mb-2">KPI Tercapai</h3>
                   <ul className="list-disc list-inside space-y-1 text-main-foreground">
-                    {data.ai_summary.achieved_kpi.map((k, i) => (
+                    {(Array.isArray(data.ai_summary.achieved_kpi) ? data.ai_summary.achieved_kpi : []).map((k, i) => (
                       <li key={i}>{k}</li>
                     ))}
                   </ul>
                 </div>
-                {data.ai_summary.not_achieved_kpi.length > 0 && (
+                {Array.isArray(data.ai_summary.not_achieved_kpi) && data.ai_summary.not_achieved_kpi.length > 0 && (
                   <div>
                     <h3 className="font-heading text-main-foreground mb-2">KPI Belum Tercapai</h3>
                     <ul className="list-disc list-inside space-y-1 text-main-foreground">
@@ -139,13 +129,13 @@ function Summary() {
                 <div>
                   <h3 className="font-heading text-main-foreground mb-2">Rekomendasi</h3>
                   <ul className="list-disc list-inside space-y-1 text-main-foreground">
-                    {data.ai_summary.recommendations.map((r, i) => (
+                    {(Array.isArray(data.ai_summary.recommendations) ? data.ai_summary.recommendations : []).map((r, i) => (
                       <li key={i}>{r}</li>
                     ))}
                   </ul>
                 </div>
                 <p className="pt-2 border-t border-border text-main-foreground italic">
-                  {data.ai_summary.motivation}
+                  {data.ai_summary.motivation ?? ""}
                 </p>
               </CardContent>
             </Card>

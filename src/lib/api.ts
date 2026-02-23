@@ -374,7 +374,7 @@ export interface PerformanceSummaryResponse {
     period: string
     ai_summary: PerformanceSummaryAiSummary
     generated_at: string
-  }
+  } | null
 }
 
 export interface PerformanceAnalyticsResponse {
@@ -390,19 +390,25 @@ export interface PerformanceAnalyticsResponse {
   }
 }
 
+/** GET summary; returns body even on 404 so caller can trigger generate */
 export async function getPerformanceSummary(
   employeeCode: string,
   period: string
 ): Promise<PerformanceSummaryResponse> {
-  return api.get(`performance/summary/${encodeURIComponent(employeeCode)}/${period}`) as Promise<PerformanceSummaryResponse>
+  const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+  const endpoint = `performance/summary/${encodeURIComponent(employeeCode)}/${period}`
+  const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
+  const response = await fetch(url, { method: 'GET', headers: authHeaders() })
+  const body = (await response.json().catch(() => ({}))) as PerformanceSummaryResponse
+  if (!response.ok && response.status !== 404) {
+    throw new Error(body.message || 'Failed to fetch summary')
+  }
+  return { ...body, code: body.code ?? response.status, status: body.status ?? (response.ok ? 'success' : 'error'), data: body.data ?? null } as PerformanceSummaryResponse
 }
 
-/** POST: generate/regenerate AI summary untuk karyawan & periode */
-export async function generatePerformanceSummary(
-  employeeCode: string,
-  period: string
-): Promise<unknown> {
-  return api.post(`performance/generate/${encodeURIComponent(employeeCode)}/${period}`)
+/** POST: generate/regenerate AI summary untuk periode (user dari token) */
+export async function generatePerformanceSummary(period: string): Promise<unknown> {
+  return api.post(`performance/generate/${encodeURIComponent(period)}`)
 }
 
 export async function getPerformanceAnalytics(period: string): Promise<PerformanceAnalyticsResponse> {
