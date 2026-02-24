@@ -1,18 +1,20 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from 'next-themes'
-import { Moon, Sun, LogOut } from 'lucide-react'
+import { Moon, Sun, LogOut, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { appConfig } from '@/lib/config'
 import { clearAuth, getUser } from '@/lib/auth'
+import ChatPopup from '@/components/ChatPopup'
 
 function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
   const user = getUser()
 
   const isActive = (path: string) => location.pathname === path
@@ -70,6 +72,15 @@ function Navbar() {
               </Button>
             </Link>
 
+            <Button
+              variant="neutral"
+              size="icon"
+              onClick={() => setChatOpen(true)}
+              aria-label="Buka AI Assistant"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+
             {user && (
               <span className="text-sm text-foreground/80 hidden sm:inline">
                 {user.full_name}
@@ -99,6 +110,7 @@ function Navbar() {
           </div>
         </div>
       </div>
+      <ChatPopup open={chatOpen} onOpenChange={setChatOpen} />
     </nav>
   )
 }

@@ -415,5 +415,43 @@ export async function getPerformanceAnalytics(period: string): Promise<Performan
   return api.get(`performance/analytics/${period}`) as Promise<PerformanceAnalyticsResponse>
 }
 
+// --- Chat API ---
+
+export interface ChatSendResponse {
+  message: string
+  status?: string
+  code?: number
+  data?: {
+    id: number
+    assistant_content: string
+  }
+}
+
+export interface ChatHistoryItem {
+  id?: number
+  role: 'user' | 'assistant'
+  content: string
+  created_at?: string
+}
+
+export interface ChatHistoryResponse {
+  message?: string
+  status?: string
+  code?: number
+  data?: {
+    history: ChatHistoryItem[]
+    count?: number
+  }
+}
+
+export async function postChat(message: string): Promise<ChatSendResponse> {
+  return api.post('chat', { message }) as Promise<ChatSendResponse>
+}
+
+export async function getChatHistory(limit?: number): Promise<ChatHistoryResponse> {
+  const qs = limit != null ? `?limit=${Math.min(Math.max(1, limit), 200)}` : ''
+  return api.get(`chat/history${qs}`) as Promise<ChatHistoryResponse>
+}
+
 export default api
 
