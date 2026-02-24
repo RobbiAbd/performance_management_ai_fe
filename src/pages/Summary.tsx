@@ -103,7 +103,8 @@ function Summary() {
               <CardHeader>
                 <CardTitle>Ringkasan</CardTitle>
                 <CardDescription className="text-main-foreground/80">
-                  Periode {data.period} · Dihasilkan: {data.generated_at ? new Date(data.generated_at).toLocaleString("id-ID") : "-"}
+                  {data.employee_code ? `${data.employee_code} · ` : ""}Periode {data.period}
+                  {data.generated_at ? ` · Dihasilkan: ${new Date(data.generated_at).toLocaleString("id-ID")}` : ""}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -126,14 +127,36 @@ function Summary() {
                     </ul>
                   </div>
                 )}
-                <div>
-                  <h3 className="font-heading text-main-foreground mb-2">Rekomendasi</h3>
-                  <ul className="list-disc list-inside space-y-1 text-main-foreground">
-                    {(Array.isArray(data.ai_summary.recommendations) ? data.ai_summary.recommendations : []).map((r, i) => (
-                      <li key={i}>{r}</li>
-                    ))}
-                  </ul>
-                </div>
+                {Array.isArray(data.ai_summary.kpi_improvement_suggestions) && data.ai_summary.kpi_improvement_suggestions.length > 0 && (
+                  <div>
+                    <h3 className="font-heading text-main-foreground mb-2">Saran Peningkatan KPI</h3>
+                    <ul className="list-disc list-inside space-y-1 text-main-foreground">
+                      {data.ai_summary.kpi_improvement_suggestions.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {Array.isArray(data.ai_summary.training_rekomendation) && data.ai_summary.training_rekomendation.length > 0 && (
+                  <div>
+                    <h3 className="font-heading text-main-foreground mb-2">Rekomendasi Training</h3>
+                    <ul className="list-disc list-inside space-y-1 text-main-foreground">
+                      {data.ai_summary.training_rekomendation.map((t, i) => (
+                        <li key={i}>{t}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {Array.isArray(data.ai_summary.workload_adjustment_rekomendation) && data.ai_summary.workload_adjustment_rekomendation.length > 0 && (
+                  <div>
+                    <h3 className="font-heading text-main-foreground mb-2">Rekomendasi Penyesuaian Beban Kerja</h3>
+                    <ul className="list-disc list-inside space-y-1 text-main-foreground">
+                      {data.ai_summary.workload_adjustment_rekomendation.map((w, i) => (
+                        <li key={i}>{w}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <p className="pt-2 border-t border-border text-main-foreground italic">
                   {data.ai_summary.motivation ?? ""}
                 </p>

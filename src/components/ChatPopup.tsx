@@ -91,7 +91,7 @@ function ChatPopup({ open, onOpenChange }: ChatPopupProps) {
         <SheetHeader className="pr-12 pt-1 pb-0">
           <SheetTitle className="text-left">AI Assistant</SheetTitle>
           <SheetDescription className="text-left">
-            Tanya seputar dengan performa, KPI, motivasi, atau fitur aplikasi ini. Riwayat disimpan.
+            Tanya seputar dengan Performance Management, KPI, motivasi, atau fitur aplikasi ini. Riwayat disimpan.
           </SheetDescription>
         </SheetHeader>
 

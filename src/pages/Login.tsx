@@ -39,7 +39,7 @@ function Login() {
     try {
       const res = await login(u, p);
       if (res.status === "success" && res.data) {
-        setAuth(res.data.access_token, res.data.user);
+        setAuth(res.data.access_token, res.data.user, res.data.refresh_token);
         navigate("/", { replace: true });
       } else {
         setError(res.message || "Login gagal.");

@@ -1,5 +1,5 @@
 import { appConfig } from './config'
-import { getToken } from './auth'
+import { getToken, getRefreshToken, setTokens, clearAuth } from './auth'
 
 // Types based on API specification
 export interface TSembako {
@@ -262,11 +262,63 @@ export async function getSembakoSimpleList(): Promise<SembakoSimpleListResponse>
 /**
  * Generic API client for making HTTP requests
  */
-function authHeaders(): Record<string, string> {
+function authHeaders(token?: string | null): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  const token = getToken()
-  if (token) headers['Authorization'] = `Bearer ${token}`
+  const t = token ?? getToken()
+  if (t) headers['Authorization'] = `Bearer ${t}`
   return headers
+}
+
+function redirectToLogin(): void {
+  clearAuth()
+  window.location.assign('/login')
+}
+
+/** POST auth/refresh with refresh_token (no Bearer). Returns new tokens or throws. */
+async function refreshAuth(): Promise<{ access_token: string; refresh_token?: string }> {
+  const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
+  const url = `${baseUrl}auth/refresh`
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) throw new Error('No refresh token')
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  })
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error((err as { message?: string }).message || 'Session expired')
+  }
+  const data = (await response.json()) as { data?: { access_token: string; refresh_token?: string }; access_token?: string; refresh_token?: string }
+  const access_token = data.data?.access_token ?? data.access_token
+  const refresh_token = data.data?.refresh_token ?? data.refresh_token
+  if (!access_token) throw new Error('Invalid refresh response')
+  return { access_token, refresh_token }
+}
+
+async function fetchWithAuth(
+  url: string,
+  options: RequestInit & { skipAuthRetry?: boolean }
+): Promise<Response> {
+  const { skipAuthRetry, ...opts } = options
+  const isAuthEndpoint = url.includes('auth/login') || url.includes('auth/refresh')
+  let response = await fetch(url, { ...opts, headers: authHeaders() as HeadersInit })
+  if (response.status === 401 && !skipAuthRetry && !isAuthEndpoint) {
+    try {
+      const { access_token, refresh_token } = await refreshAuth()
+      setTokens(access_token, refresh_token)
+      response = await fetch(url, {
+        ...opts,
+        headers: authHeaders(access_token) as HeadersInit,
+      })
+      if (response.status === 401) redirectToLogin()
+      return response
+    } catch {
+      redirectToLogin()
+      throw new Error('Session expired. Silakan login kembali.')
+    }
+  }
+  return response
 }
 
 const api = {
@@ -274,10 +326,7 @@ const api = {
     const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
     const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: authHeaders(),
-    })
+    const response = await fetchWithAuth(url, { method: 'GET' })
 
     if (!response.ok) {
       const errorData: ApiErrorResponse = await response.json().catch(() => ({
@@ -295,9 +344,8 @@ const api = {
     const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
     const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
 
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: 'POST',
-      headers: authHeaders(),
       body: data ? JSON.stringify(data) : undefined,
     })
 
@@ -323,6 +371,7 @@ export interface LoginResponse {
   data: {
     access_token: string
     token_type: string
+    refresh_token?: string
     user: {
       id: number
       username: string
@@ -361,7 +410,9 @@ export interface PerformanceSummaryAiSummary {
   summary: string
   achieved_kpi: string[]
   not_achieved_kpi: string[]
-  recommendations: string[]
+  kpi_improvement_suggestions?: string[]
+  training_rekomendation?: string[]
+  workload_adjustment_rekomendation?: string[]
   motivation: string
 }
 
@@ -370,10 +421,10 @@ export interface PerformanceSummaryResponse {
   status: string
   code: number
   data: {
-    employee_id: number
+    employee_code?: string
     period: string
     ai_summary: PerformanceSummaryAiSummary
-    generated_at: string
+    generated_at?: string
   } | null
 }
 
@@ -398,7 +449,7 @@ export async function getPerformanceSummary(
   const baseUrl = normalizeBaseUrl(appConfig.apiBaseUrl)
   const endpoint = `performance/summary/${encodeURIComponent(employeeCode)}/${period}`
   const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
-  const response = await fetch(url, { method: 'GET', headers: authHeaders() })
+  const response = await fetchWithAuth(url, { method: 'GET' })
   const body = (await response.json().catch(() => ({}))) as PerformanceSummaryResponse
   if (!response.ok && response.status !== 404) {
     throw new Error(body.message || 'Failed to fetch summary')
